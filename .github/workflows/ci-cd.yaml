@@ -10,7 +10,7 @@ on:
       - ".github/workflows/ci-cd.yaml"
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -40,3 +40,18 @@ jobs:
           context: apps/ci-demo
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Update Kubernetes manifest
+        shell: bash
+        run: |
+          sed -i "s|image: .*|image: ${IMAGE_NAME}:${GITHUB_SHA}|" \
+            apps/ci-demo/k8s/deployment.yaml
+
+      - name: Commit updated manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/ci-demo/k8s/deployment.yaml
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy ci-demo image ${GITHUB_SHA}"
+          git push
