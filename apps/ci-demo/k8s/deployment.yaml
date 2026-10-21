@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/a-k-a-s-h-1/gitops-demo:1cf101fa611b8293621592737ce7e83a024e8a15
+          image: ghcr.io/a-k-a-s-h-1/gitops-demo:60fd591d805462dd05881e66f8ec02a3a7bb71d7
           ports:
             - containerPort: 80
