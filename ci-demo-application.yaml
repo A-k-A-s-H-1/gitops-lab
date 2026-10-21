@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ci-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/A-k-A-s-H-1/gitops-lab.git
+    targetRevision: main
+    path: apps/ci-demo/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ci-demo
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
