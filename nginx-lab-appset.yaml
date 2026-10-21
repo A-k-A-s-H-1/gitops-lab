@@ -1,0 +1,35 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: nginx-lab-environments
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - environment: dev
+          - environment: prod
+
+  template:
+    metadata:
+      name: 'nginx-lab-{{environment}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/A-k-A-s-H-1/gitops-lab.git
+        targetRevision: main
+        path: apps/nginx-chart
+        helm:
+          valueFiles:
+            - environments/{{environment}}.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'nginx-lab-{{environment}}'
+      syncPolicy:
+        automated:
+          enabled: true
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
